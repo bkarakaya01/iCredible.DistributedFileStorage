@@ -15,13 +15,15 @@ public class SequentialStorageProviderFactory : IStorageProviderFactory
             throw new InvalidOperationException("At least one IStorageProvider must be registered.");
     }
 
-    public IStorageProvider GetProviderByName(string name)
-    {
-        return null;
-    }
-
     public IStorageProvider GetProviderForChunk(int chunkOrder)
     {
-        return null;
+        int index = chunkOrder % _providers.Count;
+        return _providers[index];
+    }
+
+    public IStorageProvider GetProviderByName(string name)
+    {
+        var provider = _providers.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return provider ?? throw new InvalidOperationException($"No storage provider found with name: {name}");
     }
 }
