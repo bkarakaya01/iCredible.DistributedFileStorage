@@ -8,10 +8,9 @@ public class RedisStorageProvider : IStorageProvider
     private readonly IDatabase _db;
     public string Name => "Redis";
 
-    public RedisStorageProvider(string connectionString)
+    public RedisStorageProvider(IConnectionMultiplexer connectionMultiplexer)
     {
-        var redis = ConnectionMultiplexer.Connect(connectionString);
-        _db = redis.GetDatabase();
+        _db = connectionMultiplexer.GetDatabase();
     }
 
     public Task SaveChunkAsync(string chunkId, byte[] data)

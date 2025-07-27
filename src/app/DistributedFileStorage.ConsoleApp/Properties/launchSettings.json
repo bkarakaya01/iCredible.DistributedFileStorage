@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DistributedFileStorage.ConsoleApp": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
