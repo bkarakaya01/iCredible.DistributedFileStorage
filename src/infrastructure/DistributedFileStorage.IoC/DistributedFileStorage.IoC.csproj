@@ -6,4 +6,17 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\DistributedFileStorage.Application\DistributedFileStorage.Application.csproj" />
+    <ProjectReference Include="..\..\core\DistributedFileStorage.Domain\DistributedFileStorage.Domain.csproj" />
+    <ProjectReference Include="..\DistributedFileStorage.Infrastructure\DistributedFileStorage.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

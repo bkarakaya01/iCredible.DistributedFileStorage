@@ -1,5 +1,5 @@
-﻿using DistributedFileStorage.Application.Interfaces;
-using DistributedFileStorage.Domain.Entities;
+﻿using DistributedFileStorage.Domain.Entities;
+using DistributedFileStorage.Domain.Interfaces;
 
 namespace DistributedFileStorage.Application.Services
 {

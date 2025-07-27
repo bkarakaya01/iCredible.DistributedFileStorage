@@ -1,5 +1,5 @@
-﻿using DistributedFileStorage.Application.Interfaces;
-using DistributedFileStorage.Domain.Entities;
+﻿using DistributedFileStorage.Domain.Entities;
+using DistributedFileStorage.Domain.Interfaces;
 using DistributedFileStorage.Domain.Interfaces.Storage;
 using DistributedFileStorage.Domain.Interfaces.Strategies;
 using DistributedFileStorage.Infrastructure.Persistence;
