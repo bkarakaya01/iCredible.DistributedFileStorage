@@ -1,7 +1,12 @@
-﻿namespace DistributedFileStorage.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DistributedFileStorage.Domain.Entities;
 
 public class ChunkMetadata
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public string ChunkId { get; set; } = null!;
     public int Order { get; set; }
     public long Size { get; set; }
