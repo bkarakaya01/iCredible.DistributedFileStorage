@@ -2,26 +2,42 @@
 using DistributedFileStorage.IoC.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-var builder = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json");
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration((context, config) =>
+    {
+        config
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddEnvironmentVariables();
+    })
+    .ConfigureServices((context, services) =>
+    {
+        services.AddDistributedFileStorage(context.Configuration);
+    })
+    .Build();
 
-var configuration = builder.Build();
+using var scope = host.Services.CreateScope();
+var provider = scope.ServiceProvider;
 
-var services = new ServiceCollection();
-services.AddDistributedFileStorage(configuration);
-
-var provider = services.BuildServiceProvider();
-
-var chunkService = provider.GetRequiredService<ChunkService>();
-var reconstructor = provider.GetRequiredService<Reconstructor>();
-
+// Dosya yolları
 string filePath = Path.Combine("Files", "sample.pdf");
 string outputPath = Path.Combine("Files", "reconstructed.pdf");
 
-Console.WriteLine("-> Chunking...");
-var chunks = await chunkService.ChunkAndStoreAsync(filePath);
+try
+{
+    Console.WriteLine("-> Chunking...");
+    var chunkService = provider.GetRequiredService<ChunkService>();
+    var chunks = await chunkService.ChunkAndStoreAsync(filePath);
 
-Console.WriteLine("-> Reconstructing...");
-await reconstructor.ReconstructFileAsync(chunks.First().FileMetadataId, outputPath);
+    Console.WriteLine("-> Reconstructing...");
+    var reconstructor = provider.GetRequiredService<Reconstructor>();
+    await reconstructor.ReconstructFileAsync(chunks.First().FileMetadataId, outputPath);
+
+    Console.WriteLine("-> İşlem tamamlandı.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"-> Hata oluştu: {ex.Message}");
+}

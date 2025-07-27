@@ -12,9 +12,24 @@ public class MetadataDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<FileMetadata>()
-            .HasMany(f => f.Chunks)
-            .WithOne(c => c.File)
-            .HasForeignKey(c => c.FileMetadataId);
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ChunkMetadata>(entity =>
+        {
+            entity.HasKey(e => e.ChunkId);
+            entity.Property(e => e.ChunkId).IsRequired();
+            entity.Property(e => e.StorageProviderName).IsRequired();
+            entity.HasOne(e => e.File)
+                  .WithMany(f => f.Chunks)
+                  .HasForeignKey(e => e.FileMetadataId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<FileMetadata>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FileName).IsRequired();
+            entity.Property(e => e.OriginalChecksum).IsRequired();
+        });
     }
 }
