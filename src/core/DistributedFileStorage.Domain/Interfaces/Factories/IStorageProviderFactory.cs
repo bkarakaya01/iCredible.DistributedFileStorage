@@ -1,6 +1,6 @@
 ﻿using DistributedFileStorage.Domain.Interfaces.Storage;
 
-namespace DistributedFileStorage.Application.Interfaces;
+namespace DistributedFileStorage.Domain.Interfaces;
 
 public interface IStorageProviderFactory
 {
