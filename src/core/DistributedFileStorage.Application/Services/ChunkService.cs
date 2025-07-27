@@ -1,4 +1,5 @@
-﻿using DistributedFileStorage.Domain.Entities;
+﻿using DistributedFileStorage.Application.Utils;
+using DistributedFileStorage.Domain.Entities;
 using DistributedFileStorage.Domain.Interfaces;
 using DistributedFileStorage.Domain.Interfaces.Storage;
 using DistributedFileStorage.Domain.Interfaces.Strategies;
@@ -41,7 +42,7 @@ public class ChunkService
             var chunk = new byte[bytesRead];
             Array.Copy(buffer, chunk, bytesRead);
 
-            string chunkId = CalculateChunkId(chunk);
+            string chunkId = ChecksumHelper.CalculateChunkId(chunk);
             IStorageProvider provider = _providerFactory.GetProviderForChunk(order);
             await provider.SaveChunkAsync(chunkId, chunk);
 
@@ -58,7 +59,7 @@ public class ChunkService
         {
             FileName = Path.GetFileName(filePath),
             FileSize = fileSize,
-            OriginalChecksum = CalculateFileChecksum(filePath),
+            OriginalChecksum = ChecksumHelper.CalculateFileChecksum(filePath),
             Chunks = metadataList
         };
 
@@ -66,19 +67,5 @@ public class ChunkService
         await _dbContext.SaveChangesAsync();
 
         return metadataList;
-    }
-
-    private static string CalculateChunkId(byte[] data)
-    {
-        var hash = SHA256.HashData(data);
-        return Convert.ToHexString(hash);
-    }
-
-    private static string CalculateFileChecksum(string filePath)
-    {
-        using var sha256 = SHA256.Create();
-        using var stream = File.OpenRead(filePath);
-        var hash = sha256.ComputeHash(stream);
-        return Convert.ToHexString(hash);
     }
 }
