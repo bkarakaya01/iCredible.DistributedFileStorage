@@ -82,17 +82,6 @@ _[Ss]cripts
 *.ncrunchsolution
 *.dot[Cc]over
 
-# Include static media assets of wwwroot for views.
-!**/wwwroot/assets/media/**/*.png
-!**/wwwroot/assets/media/**/*.svg
-!**/wwwroot/assets/media/**/*.jpg
-!**/wwwroot/assets/media/**/*.jpeg
-###################################################
-
-# Include appsettings JSON file & Exclude appsettings.Development.
-*appsettings.json
-###################################################
-
 configuration/
 publish/
 **/PublishProfiles/
