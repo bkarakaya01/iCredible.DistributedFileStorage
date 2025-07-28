@@ -17,7 +17,7 @@ var host = Host.CreateDefaultBuilder(args).ConfigureAppConfiguration((context, c
     })
     .Build();
 
-await host.InitDbAsync();
+await host.SetupDbMigrations();
 
 using var scope = host.Services.CreateScope();
 var provider = scope.ServiceProvider;

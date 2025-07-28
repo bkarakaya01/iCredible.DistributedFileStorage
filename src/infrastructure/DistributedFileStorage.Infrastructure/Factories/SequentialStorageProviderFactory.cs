@@ -3,10 +3,18 @@ using DistributedFileStorage.Domain.Interfaces.Storage;
 
 namespace DistributedFileStorage.Infrastructure.Factories;
 
+/// <summary>
+/// A sequential storage provider factory that distributes file chunks across registered providers in round-robin order.
+/// </summary>
 public class SequentialStorageProviderFactory : IStorageProviderFactory
 {
     private readonly List<IStorageProvider> _providers;
 
+    /// <summary>
+    /// Initializes the factory with a collection of available storage providers.
+    /// </summary>
+    /// <param name="providers">The list of available <see cref="IStorageProvider"/> instances.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the provider list is empty.</exception>
     public SequentialStorageProviderFactory(IEnumerable<IStorageProvider> providers)
     {
         _providers = [.. providers];
