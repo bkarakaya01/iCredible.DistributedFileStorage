@@ -17,17 +17,20 @@ This project aims to:
 
 ## Features
 
-- ✅ Chunking Strategy (pluggable)
+- ✅ Chunking Strategy
 - ✅ FileSystem, PostgreSQL, and AzureBlob Storage Support
 - ✅ File Reconstruction with Checksum Validation
 - ✅ Clean DDD-style architecture
-- ✅ Docker support
+- ✅ Docker
 - ✅ Full Unit Test Coverage
 
 ## Requirements
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - Docker (for PostgreSQL, Azurite support in dev)
+    > ⚠️ **Docker is not installed?**  
+    > Please follow the [Docker Installation Guide](./documentation/docker-installation.md) before proceeding.
+
 - Azurite (if running Azure Blob tests locally)
 
 ## Running the Project
@@ -44,7 +47,7 @@ This will spin up:
 
 > The project will run and automatically apply EF Core migrations for metadata and chunk databases.
 
-## Running Unit Tests (Important)
+## Running Unit Tests Locally (Important)
 
 To run tests locally:
 
@@ -53,6 +56,7 @@ To run tests locally:
 ```bash
 npm install -g azurite
 ```
+#### Otherwise `AzureBlobStorageProviderTests.cs` will fail.
 
 2. Start Azurite in silent mode before running tests:
 
@@ -121,7 +125,7 @@ DistributedFileStorage/
 To extend the project with new chunking strategies or storage providers:
 1. Implement the `IChunkingStrategy` interface for new chunking strategies.
 2. Implement the `IChunkStorageProvider` interface for new storage providers.
-3. Register your implementations in the `Startup.cs` or `Program.cs` file.
+3. Register your implementations in the `DistributedFileStorage.IoC` project.
 4. Ensure your new implementations are covered by unit tests in the `DistributedFileStorage.UnitTests` project.
 5. Run the tests to verify functionality.
 
