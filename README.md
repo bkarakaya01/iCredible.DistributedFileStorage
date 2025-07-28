@@ -1,6 +1,6 @@
 ## ICredible Case Study
 
-🔹 This project is a technical case study for iCredible.
+🔹 This project is a technical case study for iCredible. For details, visit [Case Study Instructions](./documentation/case-study/Senior_Software_Developer_Case_Study.pdf).
 
 ## DistributedFileStorage
 
