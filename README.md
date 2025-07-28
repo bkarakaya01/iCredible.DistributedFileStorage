@@ -28,8 +28,8 @@ This project aims to:
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - Docker (for PostgreSQL, Azurite support in dev)
-    > ⚠️ **Docker is not installed?**  
-    > Please follow the [Docker Installation Guide](./documentation/docker-installation.md) before proceeding.
+    - <code style="color : red">⚠️ **Docker is not installed?**</code>  
+        > Please follow the [Docker Installation Guide](./documentation/docker-installation.md) before proceeding.
 
 - Azurite (if running Azure Blob tests locally)
 
