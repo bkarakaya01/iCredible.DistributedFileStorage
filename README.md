@@ -38,7 +38,7 @@ This project aims to:
 To run the infrastructure services:
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
 This will spin up:
