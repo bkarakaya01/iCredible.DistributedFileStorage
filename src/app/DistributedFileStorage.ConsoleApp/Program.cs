@@ -4,8 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration((context, config) =>
+var host = Host.CreateDefaultBuilder(args).ConfigureAppConfiguration((context, config) =>
     {
         config
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -18,16 +17,18 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+await host.InitDbAsync();
+
 using var scope = host.Services.CreateScope();
 var provider = scope.ServiceProvider;
 
 // Dosya yolları
-string filePath = Path.Combine("Files", "sample.pdf");
-string outputPath = Path.Combine("Files", "reconstructed.pdf");
+var filePath = Path.Combine(AppContext.BaseDirectory, "Files", "sample.pdf");
+string outputPath = Path.Combine(AppContext.BaseDirectory, "Files", "reconstructed.pdf");
 
 try
 {
-    Console.WriteLine("-> Chunking...");
+   Console.WriteLine("-> Chunking...");
     var chunkService = provider.GetRequiredService<ChunkService>();
     var chunks = await chunkService.ChunkAndStoreAsync(filePath);
 
@@ -41,3 +42,5 @@ catch (Exception ex)
 {
     Console.WriteLine($"-> Hata oluştu: {ex.Message}");
 }
+
+await host.RunAsync();

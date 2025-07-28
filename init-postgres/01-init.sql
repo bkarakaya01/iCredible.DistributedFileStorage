@@ -1,0 +1,2 @@
+CREATE DATABASE metadata_db;
+CREATE DATABASE chunk_db;

@@ -9,7 +9,6 @@ using DistributedFileStorage.Infrastructure.Strategies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 
 namespace DistributedFileStorage.IoC.Extensions;
 
@@ -24,15 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<MetadataDbContext>(options =>
             options.UseNpgsql(config["Storage:PostgreMetadata:ConnectionString"]));
 
-        // 2. Redis bağlantısı (ConnectionMultiplexer singleton)
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-            ConnectionMultiplexer.Connect(config["Storage:Redis:ConnectionString"]));
-
         // 3. Storage Providers
-
-        // Redis
-        services.AddSingleton<RedisStorageProvider>();
-        services.AddSingleton<IStorageProvider>(sp => sp.GetRequiredService<RedisStorageProvider>());
 
         // FileSystem
         services.AddSingleton<IStorageProvider>(sp =>

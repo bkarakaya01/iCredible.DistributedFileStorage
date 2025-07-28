@@ -4,11 +4,12 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: src/app/DistributedFileStorage.ConsoleApp/Dockerfile
     depends_on:
-      - postgres
-      - redis
-      - azurite
+        postgres:
+            condition: service_healthy
+        azurite:
+            condition: service_started
     environment:
       # PostgreSQL Metadata
       POSTGRES_METADATA_CONNECTION: "Host=postgres;Port=5432;Database=metadata_db;Username=postgres;Password=pass"
@@ -16,17 +17,12 @@ services:
       # PostgreSQL Chunk
       POSTGRES_CHUNK_CONNECTION: "Host=postgres;Port=5432;Database=chunk_db;Username=postgres;Password=pass"
 
-      # Redis
-      REDIS_CONNECTION: "redis:6379"
-
       # Azure Blob via Azurite
-      AZURE_CONNECTION: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vd...==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      AZURE_CONNECTION: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://host.docker.internal:10000/devstoreaccount1;"
       AZURE_CONTAINER: "chunks"
 
     ports:
       - "8080:80"
-    volumes:
-      - .:/app
 
   postgres:
     image: postgres:15
@@ -37,11 +33,12 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
+      - ./init-postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -49,7 +46,7 @@ services:
       - "10000:10000"
     volumes:
       - azurite_data:/data
-    command: "azurite-blob --blobHost 0.0.0.0"
+    command: "azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck"
 
 volumes:
   pgdata:
