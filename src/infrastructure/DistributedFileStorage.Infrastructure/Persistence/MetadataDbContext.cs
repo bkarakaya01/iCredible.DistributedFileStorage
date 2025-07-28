@@ -3,11 +3,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DistributedFileStorage.Infrastructure.Persistence;
 
+/// <summary>
+/// Represents the Entity Framework Core database context for storing file and chunk metadata.
+/// </summary>
 public class MetadataDbContext : DbContext
 {
     public MetadataDbContext(DbContextOptions<MetadataDbContext> options) : base(options) { }
 
+    /// <summary>
+    /// Gets or sets the file metadata entities.
+    /// </summary>
     public DbSet<FileMetadata> Files { get; set; }
+
+    /// <summary>
+    /// Gets or sets the chunk metadata entities.
+    /// </summary>
     public DbSet<ChunkMetadata> Chunks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
