@@ -2,7 +2,7 @@
 
 🔹 This project is a technical case study for iCredible.
 
-# DistributedFileStorage
+## DistributedFileStorage
 
 DistributedFileStorage is a modular, testable .NET 8-based project designed for chunked file storage and distributed storage provider support. 
 It offers flexible chunking strategies, metadata tracking, and chunk storage via providers like Azure Blob, PostgreSQL, and FileSystem (extensible).
