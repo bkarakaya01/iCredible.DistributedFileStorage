@@ -4,6 +4,7 @@ using DistributedFileStorage.Domain.Interfaces;
 using DistributedFileStorage.Domain.Interfaces.Storage;
 using DistributedFileStorage.Domain.Interfaces.Strategies;
 using DistributedFileStorage.Infrastructure.Persistence;
+using Microsoft.Extensions.Logging;
 
 namespace DistributedFileStorage.Application.Services;
 
@@ -16,6 +17,7 @@ public class ChunkService
     private readonly IStorageProviderFactory _providerFactory;
     private readonly IChunkingStrategy _chunkingStrategy;
     private readonly MetadataDbContext _dbContext;
+    private readonly ILogger<ChunkService> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ChunkService"/> class.
@@ -26,11 +28,13 @@ public class ChunkService
     public ChunkService(
         IStorageProviderFactory providerFactory,
         IChunkingStrategy chunkingStrategy,
-        MetadataDbContext dbContext)
+        MetadataDbContext dbContext,
+        ILogger<ChunkService> logger)
     {
         _providerFactory = providerFactory;
         _chunkingStrategy = chunkingStrategy;
         _dbContext = dbContext;
+        _logger = logger;
     }
 
     /// <summary>
@@ -41,8 +45,17 @@ public class ChunkService
     /// <returns>A list of metadata objects describing each stored chunk.</returns>
     public async Task<List<ChunkMetadata>> ChunkAndStoreAsync(string filePath)
     {
+        _logger.LogInformation("Starting chunking process for file: {FilePath}", filePath);
+
+        if (!File.Exists(filePath))
+        {
+            _logger.LogError("File not found at path: {FilePath}", filePath);
+            throw new FileNotFoundException("The specified file does not exist.", filePath);
+        }
+
         long fileSize = new FileInfo(filePath).Length;
         int chunkSize = _chunkingStrategy.GetChunkSize(fileSize);
+        _logger.LogInformation("File size: {FileSize} bytes. Calculated chunk size: {ChunkSize} bytes.", fileSize, chunkSize);
 
         List<ChunkMetadata> metadataList = [];
 
@@ -58,15 +71,22 @@ public class ChunkService
 
             string chunkId = ChecksumHelper.CalculateChunkId(chunk);
             IStorageProvider provider = _providerFactory.GetProviderForChunk(order);
+
+            _logger.LogInformation("Saving chunk #{Order} (ID: {ChunkId}, Size: {Size} bytes) to provider: {Provider}",
+                order, chunkId, chunk.Length, provider.Name);
+
             await provider.SaveChunkAsync(chunkId, chunk);
 
             metadataList.Add(new ChunkMetadata
             {
                 ChunkId = chunkId,
-                Order = order++,
+                Order = order,
                 Size = chunk.Length,
                 StorageProviderName = provider.Name
             });
+
+            _logger.LogInformation("Chunk #{Order} stored successfully into {Provider}.", order, provider.Name);
+            order++;
         }
 
         var fileRecord = new FileMetadata
@@ -77,8 +97,13 @@ public class ChunkService
             Chunks = metadataList
         };
 
+        _logger.LogInformation("Persisting file metadata to database for file: {FileName} with {ChunkCount} chunks.",
+            fileRecord.FileName, metadataList.Count);
+
         _dbContext.Files.Add(fileRecord);
         await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation("File metadata saved successfully. Chunking process completed.");
 
         return metadataList;
     }
