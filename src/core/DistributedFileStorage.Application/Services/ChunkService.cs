@@ -72,7 +72,7 @@ public class ChunkService
             string chunkId = ChecksumHelper.CalculateChunkId(chunk);
             IStorageProvider provider = _providerFactory.GetProviderForChunk(order);
 
-            _logger.LogDebug("Saving chunk #{Order} (ID: {ChunkId}, Size: {Size} bytes) to provider: {Provider}",
+            _logger.LogInformation("Saving chunk #{Order} (ID: {ChunkId}, Size: {Size} bytes) to provider: {Provider}",
                 order, chunkId, chunk.Length, provider.Name);
 
             await provider.SaveChunkAsync(chunkId, chunk);
@@ -85,7 +85,7 @@ public class ChunkService
                 StorageProviderName = provider.Name
             });
 
-            _logger.LogInformation("Chunk #{Order} stored successfully.", order);
+            _logger.LogInformation("Chunk #{Order} stored successfully into {Provider}.", order, provider.Name);
             order++;
         }
 
