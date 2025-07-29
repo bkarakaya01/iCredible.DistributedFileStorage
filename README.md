@@ -2,6 +2,9 @@
 
 🔹 This project is a technical case study for iCredible. For details, visit [Case Study Instructions](./documentation/case-study/Senior_Software_Developer_Case_Study.pdf).
 
+### Logs:
+    - Implements detailed Logs by using Serilog - 29.07.2025
+    
 ## DistributedFileStorage
 
 DistributedFileStorage is a modular, testable .NET 8-based project designed for chunked file storage and distributed storage provider support. 
