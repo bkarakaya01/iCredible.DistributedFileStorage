@@ -21,6 +21,7 @@ public class ChunkServiceTests
     {
         _providerFactoryMock = new();
         _strategyMock = new();
+        _loggerMock = new();
 
         var options = new DbContextOptionsBuilder<MetadataDbContext>()
             .UseInMemoryDatabase("TestDb")

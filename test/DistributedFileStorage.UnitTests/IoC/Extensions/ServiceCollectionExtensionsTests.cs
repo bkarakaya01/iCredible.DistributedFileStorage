@@ -31,6 +31,7 @@ public class ServiceCollectionExtensionsTests
             .AddInMemoryCollection(inMemorySettings!)
             .Build();
 
+        services.AddLogging();
         services.AddDistributedFileStorage(configuration);
 
         _provider = services.BuildServiceProvider();
