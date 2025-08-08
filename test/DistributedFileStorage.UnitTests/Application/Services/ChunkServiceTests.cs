@@ -1,10 +1,12 @@
-﻿using DistributedFileStorage.Application.Services;
+﻿using Castle.Core.Logging;
+using DistributedFileStorage.Application.Services;
 using DistributedFileStorage.Domain.Interfaces;
 using DistributedFileStorage.Domain.Interfaces.Storage;
 using DistributedFileStorage.Domain.Interfaces.Strategies;
 using DistributedFileStorage.Infrastructure.Persistence;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace DistributedFileStorage.UnitTests.Application.Services;
@@ -14,7 +16,7 @@ public class ChunkServiceTests
     private readonly Mock<IChunkingStrategy> _strategyMock;
     private readonly MetadataDbContext _dbContext;
     private readonly ChunkService _chunkService;
-
+    private readonly Mock<ILogger<ChunkService>> _loggerMock;
     public ChunkServiceTests()
     {
         _providerFactoryMock = new();
@@ -25,7 +27,7 @@ public class ChunkServiceTests
             .Options;
 
         _dbContext = new MetadataDbContext(options);
-        _chunkService = new ChunkService(_providerFactoryMock.Object, _strategyMock.Object, _dbContext);
+        _chunkService = new ChunkService(_providerFactoryMock.Object, _strategyMock.Object, _dbContext, _loggerMock.Object);
     }
 
     [Fact]

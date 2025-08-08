@@ -5,6 +5,7 @@ using DistributedFileStorage.Domain.Interfaces;
 using DistributedFileStorage.Domain.Interfaces.Storage;
 using DistributedFileStorage.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Text;
 
@@ -65,7 +66,8 @@ public class ReconstructorTests
 
         var outputPath = Path.Combine(Path.GetTempPath(), $"reconstructed_{Guid.NewGuid()}.txt");
 
-        var reconstructor = new Reconstructor(factoryMock.Object, dbContext);
+        var loggerMock = new Mock<ILogger<Reconstructor>>();
+        var reconstructor = new Reconstructor(factoryMock.Object, dbContext, loggerMock.Object);
 
         // Act
         await reconstructor.ReconstructFileAsync(fileId, outputPath);
@@ -90,7 +92,8 @@ public class ReconstructorTests
 
         using var dbContext = new MetadataDbContext(options);
         var factoryMock = new Mock<IStorageProviderFactory>();
-        var reconstructor = new Reconstructor(factoryMock.Object, dbContext);
+        var loggerMock = new Mock<ILogger<Reconstructor>>();
+        var reconstructor = new Reconstructor(factoryMock.Object, dbContext, loggerMock.Object);
         var nonexistentId = Guid.NewGuid();
 
         // Act & Assert
@@ -137,7 +140,8 @@ public class ReconstructorTests
         var factoryMock = new Mock<IStorageProviderFactory>();
         factoryMock.Setup(f => f.GetProviderByName("Mock")).Returns(providerMock.Object);
 
-        var reconstructor = new Reconstructor(factoryMock.Object, dbContext);
+        var loggerMock = new Mock<ILogger<Reconstructor>>();
+        var reconstructor = new Reconstructor(factoryMock.Object, dbContext, loggerMock.Object);
         var outputPath = Path.Combine(Path.GetTempPath(), $"output_{Guid.NewGuid()}.bin");
 
         // Act & Assert
